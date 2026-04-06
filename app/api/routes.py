@@ -1,6 +1,12 @@
-from fastapi import APIRouter
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from app.api.schemas import ResultResponse, StatusResponse, SubmitRequest, SubmitResponse
+from app.db.deps import get_db
+from app.db.models import Job
+from app.services.content_hash import compute_content_hash
 
 
 router = APIRouter()
@@ -12,19 +18,26 @@ def health() -> dict:
 
 
 @router.post("/submit", response_model=SubmitResponse)
-def submit(payload: SubmitRequest) -> SubmitResponse:
-    # Phase 5 will create job + enqueue.
-    raise NotImplementedError
+def submit(payload: SubmitRequest, db: Session = Depends(get_db)) -> SubmitResponse:
+    job = Job(
+        status="queued",
+        input_type="url" if payload.url else "text",
+        url=payload.url,
+        text=payload.text,
+        content_hash=compute_content_hash(url=payload.url, text=payload.text),
+    )
+    db.add(job)
+    db.commit()
+    db.refresh(job)
+    return SubmitResponse(job_id=job.id, status=job.status)
 
 
 @router.get("/status/{job_id}", response_model=StatusResponse)
-def status(job_id: str) -> StatusResponse:
-    # Phase 7 will read status from DB.
+def status(job_id: UUID) -> StatusResponse:
     raise NotImplementedError
 
 
 @router.get("/result/{job_id}", response_model=ResultResponse)
-def result(job_id: str) -> ResultResponse:
-    # Phase 7 will read result from DB/cache.
+def result(job_id: UUID) -> ResultResponse:
     raise NotImplementedError
 
