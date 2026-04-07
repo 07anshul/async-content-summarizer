@@ -4,8 +4,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.schemas import ResultResponse, StatusResponse, SubmitRequest, SubmitResponse
+from app.core.config import settings
 from app.db.deps import get_db
 from app.db.models import Job
+from app.queue.redis_queue import get_queue
 from app.services.content_hash import compute_content_hash
 
 
@@ -29,6 +31,10 @@ def submit(payload: SubmitRequest, db: Session = Depends(get_db)) -> SubmitRespo
     db.add(job)
     db.commit()
     db.refresh(job)
+
+    queue = get_queue(settings.redis_url)
+    queue.push(str(job.id))
+
     return SubmitResponse(job_id=job.id, status=job.status)
 
 
