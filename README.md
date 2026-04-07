@@ -1,5 +1,9 @@
 ## Async Content Summarizer
 
+### Architecture
+
+![Architecture](architecture.png)
+
 ### Local (Docker Compose)
 
 - Copy env: `cp .env.example .env` and fill values
@@ -22,7 +26,7 @@ Submit:
 ```bash
 curl -sS -X POST http://localhost:8000/submit \
   -H 'Content-Type: application/json' \
-  -d '{"text":"hello world"}'
+  -d '{"text":""}'
 ```
 
 Poll:
@@ -40,8 +44,8 @@ curl -sS http://localhost:8000/result/<job_id>
 Duplicate (cache hit on second submit):
 
 ```bash
-curl -sS -X POST http://localhost:8000/submit -H 'Content-Type: application/json' -d '{"text":"dup"}'
-curl -sS -X POST http://localhost:8000/submit -H 'Content-Type: application/json' -d '{"text":"dup"}'
+curl -sS -X POST http://localhost:8000/submit -H 'Content-Type: application/json' -d '{"text":"duplicate"}'
+curl -sS -X POST http://localhost:8000/submit -H 'Content-Type: application/json' -d '{"text":"duplicate"}'
 ```
 
 ### Tests
@@ -49,19 +53,6 @@ curl -sS -X POST http://localhost:8000/submit -H 'Content-Type: application/json
 ```bash
 pytest -q
 ```
-
-### What to submit
-
-1. **GitHub repository**
-   - Working code with clear structure
-   - `README.md` with setup instructions
-   - `.env.example` with required environment variables
-
-2. **Video walkthrough (5–7 minutes)**
-   - Architecture overview (quick diagram)
-   - Code walkthrough (key files only)
-   - Live demo: submit → poll → get result
-   - Edge cases (validation, failures, caching)
 
 ### Local (without Docker)
 
