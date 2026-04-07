@@ -8,3 +8,9 @@ def compute_content_hash(*, url: str | None, text: str | None) -> str:
         raw = "text:" + (text or "").strip()
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
+
+def compute_extracted_hash(text: str) -> str:
+    normalized = " ".join((text or "").split())
+    raw = "content:" + normalized
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
