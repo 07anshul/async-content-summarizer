@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 import redis
 
@@ -10,7 +11,7 @@ class RedisCache:
     redis: redis.Redis
     prefix: str = "summary:"
 
-    def get_summary(self, content_hash: str) -> str | None:
+    def get_summary(self, content_hash: str) -> Optional[str]:
         value = self.redis.get(self.prefix + content_hash)
         if value is None:
             return None

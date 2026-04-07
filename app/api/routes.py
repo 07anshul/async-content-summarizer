@@ -52,6 +52,7 @@ def submit(payload: SubmitRequest, db: Session = Depends(get_db)) -> SubmitRespo
         url=payload.url,
         text=payload.text,
         content_hash=compute_content_hash(url=payload.url, text=payload.text),
+        cached=False,
     )
     db.add(job)
     db.commit()
@@ -82,7 +83,7 @@ def result(job_id: UUID, db: Session = Depends(get_db)) -> ResultResponse:
         job_id=job.id,
         original_url=job.url,
         summary=job.summary,
-        cached=job.cached,
+        cached=bool(job.cached),
         processing_time_ms=job.processing_time_ms,
         error=job.error,
     )

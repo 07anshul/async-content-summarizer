@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
+from typing import Optional
 
 import redis
 
@@ -13,7 +12,7 @@ class RedisQueue:
     def push(self, item: str) -> None:
         self.redis.lpush(self.key, item)
 
-    def pop_blocking(self, *, timeout_seconds: int = 5) -> str | None:
+    def pop_blocking(self, *, timeout_seconds: int = 5) -> Optional[str]:
         result = self.redis.brpop(self.key, timeout=timeout_seconds)
         if result is None:
             return None

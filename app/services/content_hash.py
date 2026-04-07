@@ -1,7 +1,8 @@
 import hashlib
+from typing import Optional
 
 
-def compute_content_hash(*, url: str | None, text: str | None) -> str:
+def compute_content_hash(*, url: Optional[str], text: Optional[str]) -> str:
     if url:
         raw = "url:" + url.strip()
     else:
