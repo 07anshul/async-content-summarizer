@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 
-from sqlalchemy import CheckConstraint, DateTime, String, Text, func
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,6 +22,9 @@ class Job(Base):
 
     summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    cached: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    processing_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[object] = mapped_column(

@@ -25,26 +25,31 @@ def process_job(db: Session, *, job_id: UUID) -> None:
     job.status = "processing"
     db.commit()
 
+    t0 = time.perf_counter()
     try:
         log.info("processing job job_id=%s", job_id)
         content = fetch_and_extract_text(job.url) if job.input_type == "url" else (job.text or "")
         extracted_hash = compute_extracted_hash(content)
         job.content_hash = extracted_hash
 
-        cached = cache.get_summary(extracted_hash)
-        if cached is not None:
-            job.summary = cached
+        cached_summary = cache.get_summary(extracted_hash)
+        if cached_summary is not None:
+            job.summary = cached_summary
+            job.cached = True
         else:
             job.summary = summarize(content)
+            job.cached = False
             cache.set_summary(extracted_hash, job.summary or "")
 
         job.status = "completed"
         job.error = None
+        job.processing_time_ms = int((time.perf_counter() - t0) * 1000)
         db.commit()
         log.info("completed job job_id=%s", job_id)
     except Exception as e:
         job.status = "failed"
         job.error = str(e)
+        job.processing_time_ms = int((time.perf_counter() - t0) * 1000)
         db.commit()
         log.error("failed job job_id=%s error=%s", job_id, e)
 

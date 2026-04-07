@@ -37,6 +37,8 @@ def submit(payload: SubmitRequest, db: Session = Depends(get_db)) -> SubmitRespo
                 content_hash=content_hash,
                 summary=cached,
                 error=None,
+                cached=True,
+                processing_time_ms=0,
             )
             db.add(job)
             db.commit()
@@ -76,5 +78,12 @@ def result(job_id: UUID, db: Session = Depends(get_db)) -> ResultResponse:
     job = db.get(Job, job_id)
     if job is None:
         raise HTTPException(status_code=404, detail="job not found")
-    return ResultResponse(job_id=job.id, status=job.status, summary=job.summary, error=job.error)
+    return ResultResponse(
+        job_id=job.id,
+        original_url=job.url,
+        summary=job.summary,
+        cached=job.cached,
+        processing_time_ms=job.processing_time_ms,
+        error=job.error,
+    )
 

@@ -37,7 +37,9 @@ class ResultResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     job_id: UUID
-    status: Literal["queued", "processing", "completed", "failed"]
+    original_url: Optional[str] = None
     summary: Optional[str] = None
+    cached: bool = False
+    processing_time_ms: Optional[int] = None
     error: Optional[str] = None
 
