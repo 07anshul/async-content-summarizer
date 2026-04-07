@@ -59,3 +59,7 @@ pytest -q
 - Install: `pip install -r requirements.txt`
 - Run API: `uvicorn app.main:app --reload --port 8000`
 - Health: `GET /health`
+
+### Video walkthrough
+
+- [async-content-summarizer-video.mp4](https://drive.google.com/file/d/1shm3Czpxzd6tTIc_9gh-F90qwRAr9x4C/view?usp=sharing)
