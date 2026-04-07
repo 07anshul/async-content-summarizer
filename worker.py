@@ -11,7 +11,7 @@ from app.db.session import SessionLocal
 from app.queue.redis_queue import get_queue
 from app.services.content_hash import compute_extracted_hash
 from app.services.extract import fetch_and_extract_text
-from app.services.summarizer import summarize
+from app.services.summarizer import LLMError, summarize
 
 
 def process_job(db: Session, *, job_id: UUID) -> None:
@@ -46,6 +46,12 @@ def process_job(db: Session, *, job_id: UUID) -> None:
         job.processing_time_ms = int((time.perf_counter() - t0) * 1000)
         db.commit()
         log.info("completed job job_id=%s", job_id)
+    except LLMError as e:
+        job.status = "failed"
+        job.error = e.code
+        job.processing_time_ms = int((time.perf_counter() - t0) * 1000)
+        db.commit()
+        log.error("failed job job_id=%s error=%s", job_id, e.code)
     except Exception as e:
         job.status = "failed"
         job.error = str(e)

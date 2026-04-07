@@ -21,6 +21,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://postgres:postgres@postgres:5432/context-summarizer}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
     ports:
       - "8000:8000"
     depends_on:
@@ -33,6 +35,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://postgres:postgres@postgres:5432/context-summarizer}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
     depends_on:
       - postgres
       - redis
